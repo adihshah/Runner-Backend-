@@ -1,5 +1,5 @@
 import json
-from db import db, Class, User, Assignment
+from db import db, Job, User
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -13,9 +13,28 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+# Jason
+# /api/jobs GET
+# ASSIGN USER i TO JOB /api/user/i/job POST
+# CREATE A JOB i /api/job/i POST
+# GET JOB GIVEN id /api/job/id GET
 
-@app.route('/api/classes/')
-def getclasses():
+# Aditya
+# DELETE /
+# UPDATE ^
+# CREATE NEW USER /api/users POST
+# GET USER /api/user/i GET
+
+
+# OAuth (Google)
+
+# Later
+# Connect to frontend
+# Deployment
+
+
+@app.route('/api/jobs/')
+def getjobs():
     classes = Class.query.all()
     res = {'success': True, 'data': [clas.serialize() for clas in classes]}
     return json.dumps(res), 200

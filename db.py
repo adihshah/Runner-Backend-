@@ -2,51 +2,71 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 association_table1 = db.Table('association1', db.metadata,
-                              db.Column('class', db.Integer,
-                                        db.ForeignKey('class.id')),
+                              db.Column('job', db.Integer,
+                                        db.ForeignKey('job.id')),
                               db.Column('user', db.Integer,
                                         db.ForeignKey('user.id'))
                               )
 
 
-class Class(db.Model):
-    __tablename__ = 'class'
+def serialize(iter):
+    return [i.serialize() for i in iter]
+
+
+def part_serialize(iter):
+    return [i.serialize_part() for i in iter]
+
+
+class Job(db.Model):
+    __tablename__ = 'job'
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    assignments = db.relationship(
-        'Assignment', back_populates='classes', cascade='delete')
-    students = db.relationship(
-        "User", secondary=association_table1, back_populates="classes")
-    instructors = db.relationship(
-        "User", secondary=association_table1, back_populates="classes")
+    title = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
+    category = db.Column(db.String, nullable=False)
+    starttime = db.Column(db.String, nullable=False)  # can change to UNIXtime
+    deadline = db.Column(db.String, nullable=False)  # can change to UNIXtime
+    startloc = db.Column(db.String, nullable=False)
+    endloc = db.Column(db.String, nullable=False)
+    # job poster
+    boss = db.relationship(  # confirm if this is correct
+        "User", secondary=association_table1, back_populates='job')
+    worker = db.relationship(
+        "User", secondary=association_table1, back_populates='job')
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get('code', '')
-        self.name = kwargs.get('name', '')
-        self.assignments = kwargs.get('assignments', '')
-        self.students = kwargs.get('students', '')
-        self.instructors = kwargs.get('instructors', '')
+        self.title = kwargs.get('title', '')
+        self.description = kwargs.get('description', '')
+        self.category = kwargs.get('category', '')
+        self.starttime = kwargs.get('starttime', '')
+        self.deadline = kwargs.get('deadline', '')
+        self.startloc = kwargs.get('startloc', '')
+        self.endloc = kwargs.get('endloc', '')
+        self.boss = kwargs.get('boss', '')
+        self.worker = kwargs.get('worker', '')
 
     def serialize(self):
         return {
             'id': self.id,
-            'code': self.code,
-            'name': self.name,
-            'assignments': [a.serialize() for a in self.assignments],
-            'students': [a.serialize() for a in self.students],
-            'instructors': [a.serialize() for a in self.instructors]
+            'title': self.title,
+            'category': self.category,
+            'starttime': self.starttime,
+            'deadline': self.deadline,
+            'startloc': self.startloc,
+            'endloc': self.endloc,
+            'category': self.name,
+            'boss': serialize(self.boss),
+            'worker': serialize(self.boss)
         }
 
     def serialize_part(self):
         return {
             'id': self.id,
-            'code': self.code,
-            'name': self.name,
+            'title': self.title,
+            'category': self.category,
         }
 
 
-class Assignment(db.Model):
+'''class Assignment(db.Model):
     __tablename__ = 'assignment'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String, nullable=False)
@@ -66,7 +86,7 @@ class Assignment(db.Model):
             'due_date': self.due_date,
             'class': self.classes.serialize_part()  # unsure
 
-        }
+        }'''
 
 
 class User(db.Model):
@@ -74,23 +94,34 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     netid = db.Column(db.String, nullable=False)
-    #class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
-    classes = db.relationship(
-        "Class", secondary=association_table1, back_populates="instructors")
+    phone_num = db.Column(db.String, nullable=False)
+    rating = db.Column(db.String, nullable=False)
+    jobs_completed = db.Column(db.Integer, nullable=False)
+    jobs_requested = db.Column(db.Integer, nullable=False)
+    # class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+    jobs = db.relationship(
+        "Job", secondary=association_table1, back_populates="boss")
     # Should it be back populating students or instructors?
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
         self.netid = kwargs.get('netid', '')
-        self.classes = kwargs.get('classes', '')
-        #self.class_id = kwargs.get('class_id', '')
+        self.phone_num = kwargs.get('phone_num', '')
+        self.rating = kwargs.get('rating', '')
+        self.jobs_completed = kwargs.get('jobs_completed', '')
+        self.jobs_requested = kwargs.get('jobs_requested', '')
+        self.jobs = kwargs.get('jobs', '')
 
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
             'netid': self.netid,
-            'classes': [clas.serialize_part() for clas in self.classes]
+            'phone_num': self.phone_num,
+            'rating': self.rating,
+            'jobs_completed': self.jobs_completed,
+            'jobs_requested': self.jobs_requested,
+            'jobs': part_serialize(self.jobs)
             # 'classes': self.classes.serialize_part()  # unsure about this line
 
         }
