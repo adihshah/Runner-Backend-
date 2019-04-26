@@ -1,20 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy()
 
-association_table1 = db.Table('association1', db.metadata,
-                              db.Column('job', db.Integer,
-                                        db.ForeignKey('job.id')),
-                              db.Column('user', db.Integer,
-                                        db.ForeignKey('user.id'))
-                              )
+boss_association_table = db.Table(
+    'bosses',
+    db.Model.metadata,
+    db.Column('boss_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id'))
+)
+
+worker_association_table = db.Table(
+    'workers',
+    db.Model.metadata,
+    db.Column('worker_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id'))
+)
 
 
 def serialize(iter):
     return [i.serialize() for i in iter]
-
-
-def part_serialize(iter):
-    return [i.serialize_part() for i in iter]
 
 
 class Job(db.Model):
@@ -27,66 +31,33 @@ class Job(db.Model):
     deadline = db.Column(db.String, nullable=False)  # can change to UNIXtime
     startloc = db.Column(db.String, nullable=False)
     endloc = db.Column(db.String, nullable=False)
-    # job poster
-    boss = db.relationship(  # confirm if this is correct
-        "User", secondary=association_table1, back_populates='job')
-    worker = db.relationship(
-        "User", secondary=association_table1, back_populates='job')
+
+    # https://docs.sqlalchemy.org/en/13/orm/collections.html#dynamic-relationship
+    bosses = db.relationship("User", secondary=boss_association_table)
+    workers = db.relationship("User", secondary=worker_association_table)
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title', '')
-        self.description = kwargs.get('description', '')
         self.category = kwargs.get('category', '')
+        self.description = kwargs.get('description', '')
         self.starttime = kwargs.get('starttime', '')
         self.deadline = kwargs.get('deadline', '')
         self.startloc = kwargs.get('startloc', '')
         self.endloc = kwargs.get('endloc', '')
-        self.boss = kwargs.get('boss', '')
-        self.worker = kwargs.get('worker', '')
 
     def serialize(self):
         return {
             'id': self.id,
             'title': self.title,
             'category': self.category,
+            'description': self.description,
             'starttime': self.starttime,
             'deadline': self.deadline,
             'startloc': self.startloc,
             'endloc': self.endloc,
-            'category': self.name,
-            'boss': serialize(self.boss),
-            'worker': serialize(self.boss)
+            'bosses': serialize(self.bosses),
+            'workers': serialize(self.workers)
         }
-
-    def serialize_part(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'category': self.category,
-        }
-
-
-'''class Assignment(db.Model):
-    __tablename__ = 'assignment'
-    id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String, nullable=False)
-    due_date = db.Column(db.Integer, nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
-    classes = db.relationship("Class", back_populates="assignments")
-
-    def __init__(self, **kwargs):
-        self.description = kwargs.get('description', '')
-        self.due_date = kwargs.get('due_date', '')
-        self.class_id = kwargs.get('class_id', '')
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'description': self.description,
-            'due_date': self.due_date,
-            'class': self.classes.serialize_part()  # unsure
-
-        }'''
 
 
 class User(db.Model):
@@ -98,10 +69,6 @@ class User(db.Model):
     rating = db.Column(db.String, nullable=False)
     jobs_completed = db.Column(db.Integer, nullable=False)
     jobs_requested = db.Column(db.Integer, nullable=False)
-    # class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
-    jobs = db.relationship(
-        "Job", secondary=association_table1, back_populates="boss")
-    # Should it be back populating students or instructors?
 
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
@@ -110,7 +77,6 @@ class User(db.Model):
         self.rating = kwargs.get('rating', '')
         self.jobs_completed = kwargs.get('jobs_completed', '')
         self.jobs_requested = kwargs.get('jobs_requested', '')
-        self.jobs = kwargs.get('jobs', '')
 
     def serialize(self):
         return {
@@ -121,7 +87,4 @@ class User(db.Model):
             'rating': self.rating,
             'jobs_completed': self.jobs_completed,
             'jobs_requested': self.jobs_requested,
-            'jobs': part_serialize(self.jobs)
-            # 'classes': self.classes.serialize_part()  # unsure about this line
-
         }
