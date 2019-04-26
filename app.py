@@ -36,10 +36,12 @@ Jason
 # Deployment
 
 def serialize(iter):
+    """ Shortcut for serializing into a list. """
     return [i.serialize() for i in iter]
 
 
 def get_query_by_id(q, id):
+    """ Shortcut for filtering query of given id. """
     return q.query.filter_by(id=id).first()
 
 
@@ -78,6 +80,7 @@ def create_job():
 def get_job_by_id(id):
     """ Returns specific job with the given job id. """
     job = get_query_by_id(Job, id)
+
     if job is not None:
         return json.dumps({'Success': True, 'Data': job.serialize()}), 200
     return json.dumps({'Success': False, 'Error': 'Job not found!'}), 404
@@ -85,12 +88,14 @@ def get_job_by_id(id):
 
 @app.route('/api/job/<int:id>/', methods=['DELETE'])
 def delete_job(id):
+    """ Deletes and returns job with job id. """
     job = get_query_by_id(Job, id)
+
     if job is not None:
         db.session.delete(job)
         db.session.commit()
         return json.dumps({'Success': True, 'Data': job.serialize()}), 200
-    return json.dumps({'Success': False, 'Error': 'Job not found'}), 404
+    return json.dumps({'Success': False, 'Error': 'Job not found!'}), 404
 
 
 # '''
@@ -124,7 +129,20 @@ def delete_job(id):
 #     return json.dumps({'Success': False, 'Error': 'Post not found'}), 404
 
 
-@app.route('/api/user/', methods=['POST'])
+# @app.route('/api/user/', methods=['POST'])
+@app.route('/api/job/<int:job_id>/', methods=['POST'])
+def update_job(job_id):
+    job = get_query_by_id(Job, job_id)
+
+    if job is not None:
+        job_body = json.loads(request.data)
+        job.description = job_body.get('description', job.description)
+        db.session.commit()
+        return json.dumps({'success': True, 'data': job.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'Post not found'}), 404
+
+
+@app.route('/api/users/', methods=['POST'])
 def create_user():
     """ Create a new user. """
     try:
@@ -137,8 +155,8 @@ def create_user():
         netid=body.get('netid'),
         phone_num=body.get('phone_num'),
         rating=body.get('rating'),
-        jobs_completed=body.get('jobs_completed'),
-        jobs_requested=body.get('jobs_requested'),
+        jobs_completed=body.get('jobs_completed'),  # 0
+        jobs_requested=body.get('jobs_requested'),  # 0
     )
 
     db.session.add(user)
@@ -148,7 +166,11 @@ def create_user():
 
 @app.route('/api/user/<int:user_id>/')
 def get_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
+    """ Returns user with given user id. """
+    try:
+        user = get_query_by_id(User, user_id)
+    except KeyError:
+        return json.dumps({'success': False, 'error': 'No json Provided!'}), 400
     if user is not None:
         return json.dumps({'Success': True, 'Data': user.serialize()}), 200
     return json.dumps({'Success': False, 'Error': 'User not found'}), 404
@@ -181,8 +203,30 @@ def add_user_to_job(user_id, job_id):
     db.session.commit()
     return json.dumps({'success': True, 'data': optional_job.serialize()}), 200
 
+# ******************************
+
+
+"""@app.route('/api/class/<int:class_id>/assignment/', methods=['POST'])
+def create_assignment(class_id):
+    clas = Class.query.filter_by(id=class_id).first()
+
+    if clas is not None:
+        clas_body = json.loads(request.data)
+        assignment = Assignment(
+            description=clas_body.get('description'),
+            due_date=clas_body.get('due_date'),
+            class_id=class_id
+        )
+        clas.assignments.append(assignment)
+        db.session.add(assignment)
+        db.session.commit()
+        return json.dumps({'success': True, 'data': assignment.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'Post not found'}), 404"""
+
 
 '''@app.route('/api/post/<int:post_id>/comment/', methods=['POST'])
+
+
 def post_comment(post_id):
     post = Post.query.filter_by(id=post_id).first()
 
@@ -206,6 +250,8 @@ def post_comment(post_id):
 
 
 '''@app.route('/api/post/<int:post_id>/comments/')
+
+
 def get_comments(post_id):
     post = Post.query.filter_by(id=post_id).first()
     if post is not None:
