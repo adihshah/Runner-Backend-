@@ -142,7 +142,7 @@ def update_job(job_id):
     return json.dumps({'success': False, 'error': 'Post not found'}), 404
 
 
-@app.route('/api/users/', methods=['POST'])
+@app.route('/api/user/', methods=['POST'])
 def create_user():
     """ Create a new user. """
     try:

@@ -20,6 +20,9 @@ worker_association_table = db.Table(
 def serialize(iter):
     return [i.serialize() for i in iter]
 
+def part_serialize(iter):
+    return [i.part_serialize() for i in iter]
+
 
 class Job(db.Model):
     __tablename__ = 'job'
@@ -33,8 +36,8 @@ class Job(db.Model):
     endloc = db.Column(db.String, nullable=False)
 
     # https://docs.sqlalchemy.org/en/13/orm/collections.html#dynamic-relationship
-    bosses = db.relationship("User", secondary=boss_association_table)
-    workers = db.relationship("User", secondary=worker_association_table)
+    bosses = db.relationship("User", secondary=boss_association_table, back_populates="boss_jobs")
+    workers = db.relationship("User", secondary=worker_association_table, back_populates="worker_jobs")
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title', '')
@@ -59,6 +62,12 @@ class Job(db.Model):
             'workers': serialize(self.workers)
         }
 
+    def part_serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title
+        }
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -69,7 +78,9 @@ class User(db.Model):
     rating = db.Column(db.String, nullable=False)
     jobs_completed = db.Column(db.Integer, nullable=False)
     jobs_requested = db.Column(db.Integer, nullable=False)
-
+    boss_jobs = db.relationship("Job", secondary=boss_association_table, back_populates="bosses")
+    worker_jobs = db.relationship("Job", secondary=worker_association_table, back_populates="workers")
+    
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
         self.netid = kwargs.get('netid', '')
@@ -87,4 +98,6 @@ class User(db.Model):
             'rating': self.rating,
             'jobs_completed': self.jobs_completed,
             'jobs_requested': self.jobs_requested,
+            'boss_jobs': part_serialize(self.boss_jobs),
+            'worker_jobs': part_serialize(self.worker_jobs),
         }
