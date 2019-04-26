@@ -64,31 +64,60 @@ def get_class(class_id):
         return json.dumps({'success': True, 'data': clas.serialize()}), 200
     return json.dumps({'success': False, 'error': 'Class not found'}), 404
 
-
-@app.route('/api/class/<int:class_id>/', methods=['DELETE'])
-def delete_class(class_id):
-    clas = Class.query.filter_by(id=class_id).first()
-    if clas is not None:
-        db.session.delete(clas)
+# ************************************
+@app.route('/api/class/<int:job_id>/', methods=['DELETE'])
+def delete_job(job_id):
+    job = Job.query.filter_by(id=job_id).first()
+    if job is not None:
+        db.session.delete(job)
         db.session.commit()
-        return json.dumps({'success': True, 'data': clas.serialize()}), 200
-    return json.dumps({'success': False, 'error': 'Class not found'}), 404
+        return json.dumps({'success': True, 'data': job.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'Job not found'}), 404
 
 
-'''
-@app.route('/api/post/<int:post_id>/', methods=['POST'])
-def update_post(post_id):
-    post = Post.query.filter_by(id=post_id).first()
+@app.route('/api/post/<int:job_id>/', methods=['POST'])
+def update_job(job_id):
+    job = Job.query.filter_by(id=job_id).first()
 
-    if post is not None:
-        post_body = json.loads(request.data)
-        post.text = post_body.get('text', post.text)
+    if job is not None:
+        job_body = json.loads(request.data)
+        job.description = job_body.get('description', job.description)
         db.session.commit()
-        return json.dumps({'success': True, 'data': post.serialize()}), 200
-    return json.dumps({'success': False, 'error': 'Post not found'}), 404'''
+        return json.dumps({'success': True, 'data': job.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'Post not found'}), 404
 
 
-@app.route('/api/class/<int:class_id>/assignment/', methods=['POST'])
+@app.route('/api/users/', methods=['POST'])
+def create_user():
+    user_body = json.loads(request.data)
+
+    user = User(
+        name=(user_body.get('name')),
+        netid=(user_body.get('netid')),
+        phone_num=(user_body.get('phone_num')),
+        rating=(user_body.get('rating')),
+        jobs_completed=0,
+        jobs_requested=0,
+        jobs=[]
+    )
+
+    db.session.add(user)
+    db.session.commit()
+
+    return json.dumps({'success': True, 'data': user.serialize()}), 201
+
+
+@app.route('/api/user/<int:user_id>/', methods=['GET'])
+def get_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is not None:
+        return json.dumps({'success': True, 'data': user.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'User not found'}), 404
+
+
+# ******************************
+
+"""@app.route('/api/class/<int:class_id>/assignment/', methods=['POST'])
 def create_assignment(class_id):
     clas = Class.query.filter_by(id=class_id).first()
 
@@ -106,28 +135,9 @@ def create_assignment(class_id):
     return json.dumps({'success': False, 'error': 'Post not found'}), 404
 
 
-@app.route('/api/users/', methods=['POST'])
-def create_user():
-    user_body = json.loads(request.data)
-
-    user = User(
-        name=(user_body.get('name')),
-        netid=(user_body.get('netid')),
-        classes=[]
-    )
-
-    db.session.add(user)
-    db.session.commit()
-
-    return json.dumps({'success': True, 'data': user.serialize()}), 201
 
 
-@app.route('/api/user/<int:user_id>/', methods=['GET'])
-def get_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if user is not None:
-        return json.dumps({'success': True, 'data': user.serialize()}), 200
-    return json.dumps({'success': False, 'error': 'User not found'}), 404
+
 
 
 @app.route('/api/class/<int:class_id>/add/', methods=['POST'])
@@ -138,7 +148,7 @@ def add_user_to_class(class_id):
         input_body = json.loads(request.data)
         typ = input_body.get('type')
         user_id = input_body.get('user_id')
-        #user = get_user(user_id)
+        # user = get_user(user_id)
         user = User.query.filter_by(id=user_id).first()
         if typ == 'student':
             clas.students.append(user)
@@ -151,6 +161,8 @@ def add_user_to_class(class_id):
 
 
 '''@app.route('/api/post/<int:post_id>/comment/', methods=['POST'])
+
+
 def post_comment(post_id):
     post = Post.query.filter_by(id=post_id).first()
 
@@ -174,6 +186,8 @@ def post_comment(post_id):
 
 
 '''@app.route('/api/post/<int:post_id>/comments/')
+
+
 def get_comments(post_id):
     post = Post.query.filter_by(id=post_id).first()
     if post is not None:
