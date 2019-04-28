@@ -37,6 +37,9 @@ Jason
 # Connect to frontend
 # Deployment
 
+''''''''''''''''''''''''''' Helper  Functions ''''''''''''''''''''''''''''''''''
+
+
 def serialize(iter):
     """ Shortcut for serializing into a list. """
     return [i.serialize() for i in iter]
@@ -47,6 +50,7 @@ def get_query_by_id(q, id):
     return q.query.filter_by(id=id).first()
 
 
+'''''''''''''''''''''''''''''''  Routes  '''''''''''''''''''''''''''''''''''''''
 @app.route('/api/jobs/')
 def get_jobs():
     """ Returns all jobs. """

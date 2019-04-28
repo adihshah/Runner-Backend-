@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build -t jh99/hackchallenge .
+docker push jh99/hackchallenge
