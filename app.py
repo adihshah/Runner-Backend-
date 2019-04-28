@@ -37,7 +37,7 @@ Jason
 # Connect to frontend
 # Deployment
 
-''''''''''''''''''''''''''' Helper  Functions ''''''''''''''''''''''''''''''''''
+############################ Helper Functions ##################################
 
 
 def serialize(iter):
@@ -50,7 +50,9 @@ def get_query_by_id(q, id):
     return q.query.filter_by(id=id).first()
 
 
-'''''''''''''''''''''''''''''''  Routes  '''''''''''''''''''''''''''''''''''''''
+################################## Routes ######################################
+
+
 @app.route('/api/jobs/')
 def get_jobs():
     """ Returns all jobs. """

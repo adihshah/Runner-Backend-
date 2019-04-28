@@ -1,4 +1,17 @@
 #!/bin/bash
 
-docker build -t jh99/hackchallenge .
+# This file is a shortcut to rebuild and push to dockerhub
+# The first argument is for a tag
+
+# This removes the previous images under the name jh99/hackchallenge
+docker rmi jh99/hackchallenge
+
+# Check if there are any arguments.
+if [[ "$#" > 0 ]]; then
+	docker build -t jh99/hackchallenge:"$1" .
+else
+	docker build -t jh99/hackchallenge .
+fi
+
+# Push the image that's just been created to dockerhub
 docker push jh99/hackchallenge
