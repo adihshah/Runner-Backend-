@@ -20,6 +20,7 @@ worker_association_table = db.Table(
 def serialize(iter):
     return [i.serialize() for i in iter]
 
+
 def part_serialize(iter):
     return [i.part_serialize() for i in iter]
 
@@ -30,14 +31,14 @@ class Job(db.Model):
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
-    starttime = db.Column(db.String, nullable=False)  # can change to UNIXtime
-    deadline = db.Column(db.String, nullable=False)  # can change to UNIXtime
+    starttime = db.Column(db.String, nullable=False)
+    deadline = db.Column(db.String, nullable=False)
     startloc = db.Column(db.String, nullable=False)
     endloc = db.Column(db.String, nullable=False)
-
-    # https://docs.sqlalchemy.org/en/13/orm/collections.html#dynamic-relationship
-    bosses = db.relationship("User", secondary=boss_association_table, back_populates="boss_jobs")
-    workers = db.relationship("User", secondary=worker_association_table, back_populates="worker_jobs")
+    bosses = db.relationship(
+        "User", secondary=boss_association_table, back_populates="boss_jobs")
+    workers = db.relationship(
+        "User", secondary=worker_association_table, back_populates="worker_jobs")
 
     def __init__(self, **kwargs):
         self.title = kwargs.get('title', '')
@@ -65,7 +66,9 @@ class Job(db.Model):
     def part_serialize(self):
         return {
             'id': self.id,
-            'title': self.title
+            'title': self.title,
+            'category': self.category,
+            'description': self.description,
         }
 
 
@@ -78,9 +81,11 @@ class User(db.Model):
     rating = db.Column(db.String, nullable=False)
     jobs_completed = db.Column(db.Integer, nullable=False)
     jobs_requested = db.Column(db.Integer, nullable=False)
-    boss_jobs = db.relationship("Job", secondary=boss_association_table, back_populates="bosses")
-    worker_jobs = db.relationship("Job", secondary=worker_association_table, back_populates="workers")
-    
+    boss_jobs = db.relationship(
+        "Job", secondary=boss_association_table, back_populates="bosses")
+    worker_jobs = db.relationship(
+        "Job", secondary=worker_association_table, back_populates="workers")
+
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
         self.netid = kwargs.get('netid', '')

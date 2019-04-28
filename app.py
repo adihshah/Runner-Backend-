@@ -12,6 +12,8 @@ app.config['SQLALCHEMY_ECHO'] = True
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+
 '''
 Jason
 /api/jobs/ GET
@@ -98,38 +100,6 @@ def delete_job(id):
     return json.dumps({'Success': False, 'Error': 'Job not found!'}), 404
 
 
-# '''
-# @app.route('/api/post/<int:post_id>/', methods=['POST'])
-# def update_post(post_id):
-#     post = Post.query.filter_by(id=post_id).first()
-
-#     if post is not None:
-#         post_body = json.loads(request.data)
-#         post.text = post_body.get('text', post.text)
-#         db.session.commit()
-#         return json.dumps({'Success': True, 'Data': post.serialize()}), 200
-#     return json.dumps({'Success': False, 'Error': 'Post not found'}), 404'''
-
-
-# @app.route('/api/class/<int:class_id>/assignment/', methods=['POST'])
-# def create_assignment(class_id):
-#     clas = Class.query.filter_by(id=class_id).first()
-
-#     if clas is not None:
-#         clas_body = json.loads(request.data)
-#         assignment = Assignment(
-#             description=clas_body.get('description'),
-#             due_date=clas_body.get('due_date'),
-#             class_id=class_id
-#         )
-#         clas.assignments.append(assignment)
-#         db.session.add(assignment)
-#         db.session.commit()
-#         return json.dumps({'Success': True, 'Data': assignment.serialize()}), 200
-#     return json.dumps({'Success': False, 'Error': 'Post not found'}), 404
-
-
-# @app.route('/api/user/', methods=['POST'])
 @app.route('/api/job/<int:job_id>/', methods=['POST'])
 def update_job(job_id):
     job = get_query_by_id(Job, job_id)
@@ -196,68 +166,14 @@ def add_user_to_job(user_id, job_id):
 
     if user_type == "boss":
         optional_job.bosses.append(optional_user)
-    else:
+    elif user_type == "worker":
         optional_job.workers.append(optional_user)
+    else:
+        return json.dumps({'success': False, 'error': (user_type + ' is not a user_type!')}), 404
 
     db.session.add(optional_job)
     db.session.commit()
     return json.dumps({'success': True, 'data': optional_job.serialize()}), 200
-
-# ******************************
-
-
-"""@app.route('/api/class/<int:class_id>/assignment/', methods=['POST'])
-def create_assignment(class_id):
-    clas = Class.query.filter_by(id=class_id).first()
-
-    if clas is not None:
-        clas_body = json.loads(request.data)
-        assignment = Assignment(
-            description=clas_body.get('description'),
-            due_date=clas_body.get('due_date'),
-            class_id=class_id
-        )
-        clas.assignments.append(assignment)
-        db.session.add(assignment)
-        db.session.commit()
-        return json.dumps({'success': True, 'data': assignment.serialize()}), 200
-    return json.dumps({'success': False, 'error': 'Post not found'}), 404"""
-
-
-'''@app.route('/api/post/<int:post_id>/comment/', methods=['POST'])
-
-
-def post_comment(post_id):
-    post = Post.query.filter_by(id=post_id).first()
-
-    if post is not None:
-        post_body = json.loads(request.data)
-
-        comment = Comment(
-
-            text=(post_body.get('text')),
-            username=post_body.get('username')
-            score=0,
-            post_id=post.id,
-
-        )
-
-        post.comments.append(comment)
-        db.session.add(comment)
-        db.session.commit()
-        return json.dumps({'Success': True, 'Data': comment.serialize()}), 200
-    return json.dumps({'Success': False, 'Error': 'Post not found'}), 404'''
-
-
-'''@app.route('/api/post/<int:post_id>/comments/')
-
-
-def get_comments(post_id):
-    post = Post.query.filter_by(id=post_id).first()
-    if post is not None:
-        comments = [comment.serialize() for comment in post.comments]
-        return json.dumps({'Success': True, 'Data': comments}), 200
-    return json.dumps({'Success': False, 'Error': 'Post not found'}), 404'''
 
 
 if __name__ == '__main__':
