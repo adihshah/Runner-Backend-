@@ -35,6 +35,10 @@ class Job(db.Model):
     deadline = db.Column(db.String, nullable=False)
     startloc = db.Column(db.String, nullable=False)
     endloc = db.Column(db.String, nullable=False)
+    iscomplete = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    amountpaidtoworker = db.Column(db.Integer, nullable=False)
+    profit = db.Column(db.Integer, nullable=False)
     bosses = db.relationship(
         "User", secondary=boss_association_table, back_populates="boss_jobs")
     workers = db.relationship(
@@ -48,6 +52,10 @@ class Job(db.Model):
         self.deadline = kwargs.get('deadline', '')
         self.startloc = kwargs.get('startloc', '')
         self.endloc = kwargs.get('endloc', '')
+        self.iscomplete = kwargs.get('iscomplete', '')
+        self.cost = kwargs.get('cost', '')
+        self.amountpaidtoworker = kwargs.get('amountpaidtoworker', '')
+        self.profit = kwargs.get('profit', '')
 
     def serialize(self):
         return {

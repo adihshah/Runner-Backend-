@@ -64,9 +64,9 @@ def get_jobs():
     res = {'Success': True, 'Data': serialize(jobs)}
     return json.dumps(res), 200
 
-
-@app.route('/api/job/', methods=['POST'])
-def create_job():
+# creates a job under a user with a specified ID
+@app.route('/api/job/<int:id>/', methods=['POST'])
+def create_job(id):
     """ Creates a new job. """
     try:
         body = json.loads(request.data)
@@ -82,7 +82,9 @@ def create_job():
         startloc=body.get('startloc'),
         endloc=body.get('endloc'),
     )
-
+    user = get_query_by_id(User, id)
+    user.jobs_requested += 1
+    job.bosses.append(user)
     db.session.add(job)
     db.session.commit()
     return json.dumps({'Success': True, 'Data': job.serialize()}), 201
@@ -157,8 +159,8 @@ def get_user(user_id):
 
 
 @app.route('/api/user/<int:user_id>/job/<int:job_id>/', methods=['POST'])
-def add_user_to_job(user_id, job_id):
-    """ Adds a user (user_id) to a specific job (job_id). """
+def assign_worker_to_job(user_id, job_id):
+    """ Adds a worker (user_id) to a specific job (job_id). """
     try:
         body = json.loads(request.data)
     except KeyError:
@@ -173,13 +175,11 @@ def add_user_to_job(user_id, job_id):
     optional_user = get_query_by_id(User, user_id)
     if optional_user is None:
         return json.dumps({'success': False, 'error': 'User not found!'}), 404
-
-    if user_type == "boss":
-        optional_job.bosses.append(optional_user)
-    elif user_type == "worker":
+    optional_user.jobs_completed += 1
+    if user_type == "worker":
         optional_job.workers.append(optional_user)
     else:
-        return json.dumps({'success': False, 'error': (user_type + ' is not a user_type!')}), 404
+        return json.dumps({'success': False, 'error': (user_type + ' is not a worker!')}), 404
 
     db.session.add(optional_job)
     db.session.commit()
