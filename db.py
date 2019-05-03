@@ -86,6 +86,9 @@ class User(db.Model):
     worker_jobs = db.relationship(
         "Job", secondary=worker_association_table, back_populates="workers")
 
+    
+    
+
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
         self.netid = kwargs.get('netid', '')

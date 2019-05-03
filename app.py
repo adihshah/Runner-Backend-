@@ -6,6 +6,8 @@ from google.auth.transport import requests
 
 app = Flask(__name__)
 db_filename = 'todo.db'
+request = requests.Request()
+CLIENT_ID = "ABCDE12345"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' % db_filename
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -185,7 +187,7 @@ def add_user_to_job(user_id, job_id):
 
 
 @app.route('/api/user/signin/<token>', methods=['POST'])
-def add_user_to_job(token):
+def verify_login(token):
     try:
         body = json.loads(request.data)
     except KeyError:
@@ -211,7 +213,9 @@ def add_user_to_job(token):
         userid = idinfo['sub']
     except ValueError:
         # Invalid token
-        pass
+        return json.dumps({'success': False, 'error': 'Invalid Token!'}), 404
+
+    
 
 
 if __name__ == '__main__':
