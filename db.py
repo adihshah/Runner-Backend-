@@ -126,6 +126,10 @@ class User(db.Model):
     jobs_created = db.Column(db.Integer, nullable=False)
     jobs_done = db.Column(db.Integer, nullable=False)
     money_earned = db.Column(db.Integer, nullable=False)
+    work_rating = db.Column(db.Integer, nullable=False)
+    number_of_work_rating = db.Column(db.Integer, nullable=False)
+    boss_rating = db.Column(db.Integer, nullable=False)
+    number_of_boss_rating = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String, nullable=False)
     password_digest = db.Column(db.String, nullable=False)
     boss_jobs = db.relationship(
@@ -145,7 +149,11 @@ class User(db.Model):
         self.money_earned = kwargs.get('money_earned', '')
         self.email = kwargs.get('email', '')
         self.password_digest = bcrypt.hashpw(kwargs.get('password', '').encode('utf8'),
-                                            bcrypt.gensalt(rounds=13))
+                                             bcrypt.gensalt(rounds=13))
+        self.boss_jobs = 0
+        self.boss_rating = 0
+        self.number_of_boss_rating = 0
+        self.number_of_work_rating = 0
         self.renew_session()
 
     def serialize(self):
@@ -161,6 +169,8 @@ class User(db.Model):
             'worker_jobs': part_serialize(self.worker_jobs),
             'job_history': part_serialize(self.job_history),
             'email': self.email,
+            'boss_rating': self.boss_rating,
+            'worker_rating': self.work_rating
         }
 
     def part_serialize(self):
@@ -177,7 +187,7 @@ class User(db.Model):
     def renew_session(self):
         self.session_token = self._urlsafe_base_64()
         self.session_expiration = datetime.datetime.now() + \
-                                datetime.timedelta(days=1)
+            datetime.timedelta(days=1)
         self.update_token = self._urlsafe_base_64()
 
     def verify_password(self, password):

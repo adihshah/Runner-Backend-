@@ -54,6 +54,7 @@ def get_query_by_id(q, id):
     """ Shortcut for filtering query of given id. """
     return q.query.filter_by(id=id).first()
 
+
 def extract_token(request):
     auth_header = request.headers.get('Authorization')
     if auth_header is None:
@@ -61,7 +62,7 @@ def extract_token(request):
 
     bearer_token = auth_header.replace('Bearer ', '').strip()
     if not bearer_token:
-        return False, json.dumps({'error': 'Invalid authorization header.'}) 
+        return False, json.dumps({'error': 'Invalid authorization header.'})
 
     return True, bearer_token
 
@@ -185,9 +186,10 @@ def update_job(job_id):
         job.first_Add = job_body.get('first_Add', job.first_Add)
         job.last_Add = job_body.get('last_Add', job.last_Add)
         job.date = job_body.get('date', job.date)
-        job.amountpaidtoworker = job_body.get('amountpaidtoworker', job.amountpaidtoworker)
+        job.amountpaidtoworker = job_body.get(
+            'amountpaidtoworker', job.amountpaidtoworker)
         job.profit = job_body.get('profit', job.profit)
-       
+
         db.session.commit()
         return json.dumps({'success': True, 'data': job.serialize()}), 200
     return json.dumps({'success': False, 'error': 'Post not found'}), 404
@@ -298,6 +300,28 @@ def update_session():
         'update_token': user.update_token
     })
 
+
+@app.route('/api/rate/<int:user_id>/', methods=['POST'])
+def rate_user():
+    user = get_query_by_id(User, user_id)
+
+    if user is not None:
+        body = json.loads(request.data)
+        rating = body.get('rating')
+        typ = body.get('typ')
+        if typ == 'worker':
+            n = user.number_of_work_rating
+            user.work_rating = (user.work_rating*n + rating)/(rating+1)
+            user.number_of_work_rating += 1
+            db.session.commit()
+            return json.dumps({'success': True, 'data': user.serialize()}), 200
+        elif typ == 'boss':
+            n = user.number_of_boss_rating
+            user.boss_rating = (user.boss_rating*n + rating)/(rating+1)
+            user.number_of_work_rating += 1
+            db.session.commit()
+            return json.dumps({'success': True, 'data': user.serialize()}), 200
+    return json.dumps({'success': False, 'error': 'Post not found'}), 404
 
 # @app.route('/secret/', methods=['GET'])
 # def secret_message():
