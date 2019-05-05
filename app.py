@@ -1,6 +1,7 @@
 import json
 from db import db, Jobs_in_Progress, Job_History, User
 from flask import Flask, request
+import users_dao
 # from google.oauth2 import id_token
 # from google.auth.transport import requests
 
@@ -53,6 +54,17 @@ def get_query_by_id(q, id):
     """ Shortcut for filtering query of given id. """
     return q.query.filter_by(id=id).first()
 
+def extract_token(request):
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        return False, json.dumps({'error': 'Missing authorization header.'})
+
+    bearer_token = auth_header.replace('Bearer ', '').strip()
+    if not bearer_token:
+        return False, json.dumps({'error': 'Invalid authorization header.'}) 
+
+    return True, bearer_token
+
 
 ################################## Routes ######################################
 
@@ -63,6 +75,8 @@ def get_jobs():
     jobs = Jobs_in_Progress.query.all()
     res = {'Success': True, 'Data': serialize(jobs)}
     return json.dumps(res), 200
+
+
 @app.route('/api/jobss/')
 def get_jobss():
     """ Returns all jobs. """
@@ -129,7 +143,7 @@ def complete_job(job_id):
     """ Deletes and returns job with job id. """
     job = get_query_by_id(Jobs_in_Progress, job_id)
     if job is None:
-        return json.dumps({'Success': False, 'Error': 'Job not found!'}), 
+        return json.dumps({'Success': False, 'Error': 'Job not found!'}),
     body = job.serialize()
     job_done = Job_History(
         title=body.get('title'),
@@ -156,39 +170,49 @@ def complete_job(job_id):
     return json.dumps({'Success': False, 'Error': 'Job not found!'}), 404
 
 
-@app.route('/api/job/<int:job_id>/', methods=['POST'])
+@app.route('/api/job/<int:job_id>/edit/', methods=['POST'])
 def update_job(job_id):
     job = get_query_by_id(Jobs_in_Progress, job_id)
 
     if job is not None:
         job_body = json.loads(request.data)
         job.description = job_body.get('description', job.description)
-
-        
+        job.title = job_body.get('title', job.title)
+        job.cost = job_body.get('cost', job.cost)
+        job.category = job_body.get('category', job.category)
+        job.start_time = job_body.get('start_time', job.start_time)
+        job.end_time = job_body.get('end_time', job.end_time)
+        job.first_Add = job_body.get('first_Add', job.first_Add)
+        job.last_Add = job_body.get('last_Add', job.last_Add)
+        job.date = job_body.get('date', job.date)
+        job.amountpaidtoworker = job_body.get('amountpaidtoworker', job.amountpaidtoworker)
+        job.profit = job_body.get('profit', job.profit)
+       
         db.session.commit()
         return json.dumps({'success': True, 'data': job.serialize()}), 200
     return json.dumps({'success': False, 'error': 'Post not found'}), 404
 
 
-@app.route('/api/user/', methods=['POST'])
+@app.route('/api/signup/', methods=['POST'])
 def create_user():
     """ Create a new user. """
     try:
         body = json.loads(request.data)
+        email = body.get('email')
+        password = body.get('password')
+        name = body.get('name')
+        phone_num = body.get('phone_num')
     except KeyError:
         return json.dumps({'success': False, 'error': 'No json provided!'}), 400
 
-    user = User(
-        name=body.get('name'),
-        phone_num=body.get('phone_num'),
-        rating=0,
-        jobs_created=0,
-        jobs_done=0,
-        money_earned=0,
-    )
+    if email is None or password is None:
+        return json.dumps({'error': 'Invalid email or password'})
 
-    db.session.add(user)
-    db.session.commit()
+    created, user = users_dao.create_user(name, phone_num, email, password)
+
+    if not created:
+        return json.dumps({'error': 'User already exists'})
+
     return json.dumps({'success': True, 'data': user.serialize()}), 201
 
 
@@ -221,11 +245,6 @@ def get_user(user_id):
 @app.route('/api/user/<int:user_id>/job/<int:job_id>/', methods=['POST'])
 def assign_worker_to_job(user_id, job_id):
     """ Adds a worker (user_id) to a specific job (job_id). """
-    try:
-        body = json.loads(request.data)
-    except KeyError:
-        return json.dumps({'success': False, 'error': 'No json Provided!'}), 400
-
     optional_job = get_query_by_id(Jobs_in_Progress, job_id)
     if optional_job is None:
         return json.dumps({'success': False, 'error': 'Job not found!'}), 404
@@ -233,11 +252,65 @@ def assign_worker_to_job(user_id, job_id):
     optional_user = get_query_by_id(User, user_id)
     if optional_user is None:
         return json.dumps({'success': False, 'error': 'User not found!'}), 404
-    
+
     optional_job.workers.append(optional_user)
     db.session.add(optional_job)
     db.session.commit()
     return json.dumps({'success': True, 'data': optional_job.serialize()}), 200
+
+
+@app.route('/api/login/', methods=['POST'])
+def login():
+    post_body = json.loads(request.data)
+    email = post_body.get('email')
+    password = post_body.get('password')
+
+    if email is None or password is None:
+        return json.dumps({'error': 'Invalid email or password'})
+
+    success, user = users_dao.verify_credentials(email, password)
+
+    if not success:
+        return json.dumps({'error': 'Incorrect email or password'})
+
+    return json.dumps({
+        'session_token': user.session_token,
+        'session_expiration': str(user.session_expiration),
+        'update_token': user.update_token
+    })
+
+
+@app.route('/api/update/session/', methods=['POST'])
+def update_session():
+    success, update_token = extract_token(request)
+
+    if not success:
+        return update_token
+
+    try:
+        user = users_dao.renew_session(update_token)
+    except:
+        return json.dumps({'error': 'Invalid update token'})
+
+    return json.dumps({
+        'session_token': user.session_token,
+        'session_expiration': str(user.session_expiration),
+        'update_token': user.update_token
+    })
+
+
+# @app.route('/secret/', methods=['GET'])
+# def secret_message():
+#     success, session_token = extract_token(request)
+
+#     if not success:
+#         return session_token
+
+#     user = users_dao.get_user_by_session_token(session_token)
+#     if not user or not user.verify_session_token(session_token):
+#         return json.dumps({'error': 'Invalid session token'})
+
+#     return json.dumps({'message': 'Logged in as ' + user.email})
 
 
 # @app.route('/api/user/signin/<token>', methods=['POST'])
