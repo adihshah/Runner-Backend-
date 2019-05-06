@@ -39,13 +39,21 @@ Get hired any day, any time.
 ### API Design:
 
 **_GET /api/jobs/_** - Get all jobs
+
 > This gets all the jobs that is currently available for anyone to grab.
+
 **_POST /api/job/{user_id}/_** - Create a job for a specific user
+
 > Creates a job for runners to see/accept.
+
 **_GET /api/user/{user_id}/_** - Get a specific user
+
 > Get a user's profile information
+
 **_DELETE /api/job/delete/{job_id}/_** - Delete a job BEFORE it’s completed
+
 > Remove a job from the listing. This can be useful if a job is no longer needed or 
+
 **_DELETE /api/job/finished/{job_id}/_** - Complete a job
 
 **_POST /api/user/{user_id}/_** - Update a user’s information
