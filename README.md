@@ -7,9 +7,10 @@ Get hired any day, any time.
 # Screenshots of Runner
 
 ![Opening Frame][opening_frame] ![Profile][profile] ![Sign Up][sign_up]
-![Job Posting][job_posting] ![Create Job][create_job] ![Job Confirmation][job_confirmation]
+![Job Posting][job_posting] ![Create Job][create_job] ![Job Confirmation][job_confirmation] 
+![Delete Job][delete_job]
 ![Home Screen with Job][home_screen] ![Job Poster][job_poster] ![Report][report]
-![Job Details][job_details] ![You're Hired!][youre_hired] ![Your Runner][your_runner] ![Delete Job][delete_job]
+![Job Details][job_details] ![You're Hired!][youre_hired] ![Your Runner][your_runner] 
 
 [opening_frame]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/opening_frame.png "Opening Frame"
 [profile]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/2_profile.png "Profile"
@@ -35,7 +36,11 @@ Get hired any day, any time.
 
 # Backend Requirements
 
+##### API Design
 
+
+##### Deployment to Google Cloud
+Deployed on ip address: 35.227.99.222
 
 # Any Additional Comments
 
