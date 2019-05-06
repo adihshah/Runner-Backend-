@@ -37,11 +37,31 @@ Get hired any day, any time.
 # Backend Requirements
 
 ### API Design:
----
 
+_GET /api/jobs/_** - Get all jobs
+
+_POST /api/job/{user_id}/_ - Create a job for a specific user
+
+_GET /api/user/{user_id}/_ - Get a specific user
+
+_DELETE /api/job/delete/{job_id}/_ - Delete a job BEFORE it’s completed
+
+_DELETE /api/job/finished/{job_id}/_ - Complete a job
+
+_POST /api/user/{user_id}/_ - Update a user’s information
+
+_POST /api/job/{job_id}/edit/_ - Update Job Information
+
+_POST /api/user/{user_id}/job/{job_id}/_ - Assign a worker a job
+
+_POST /api/signup/_ - Create a user (signing up)
+
+_POST /api/login/_ - Logging in for a user
+
+_POST /api/update/session_ - Update session of a user
 
 ### Deployment to Google Cloud:
----
+
 Deployed on ip address: _35.227.99.222_
 
 # Additional Comments
