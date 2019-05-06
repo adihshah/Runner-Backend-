@@ -6,7 +6,7 @@ Get hired any day, any time.
 
 # Screenshots of Runner
 
-![Opening Frame][opening_frame] ![Profile][profile] ![Sign Up][sign_up]
+![Opening Frame][opening_frame]        ![Profile][profile] ![Sign Up][sign_up]
 ![Job Posting][job_posting] ![Create Job][create_job] ![Job Confirmation][job_confirmation]
 ![Home Screen with Job][home_screen] ![Job Poster][job_poster] ![Report][report]
 ![Job Details][job_details] ![You're Hired!][youre_hired] ![Your Runner][your_runner]
