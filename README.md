@@ -38,7 +38,7 @@ Get hired any day, any time.
 
 ### API Design:
 ---
-**_GET /api/jobs/_** - Get all jobs
+<p style="font-family: courier, monospace;">GET /api/jobs/</p> - Get all jobs
 
 > This gets all the jobs that is currently available for anyone to grab.
 
