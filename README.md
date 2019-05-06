@@ -41,8 +41,7 @@ _The goal of the app, would be to further implement functionality and allow user
 
 # Backend Requirements
 
-### API Design:
----
+## API Design:
 
 **_GET /api/jobs/_** - Get all jobs
 
@@ -88,8 +87,8 @@ _The goal of the app, would be to further implement functionality and allow user
 
 > Update the session of a user currently on the app. 
 
----
-### Deployment to Google Cloud:
+
+## Deployment to Google Cloud:
 
 Deployed on ip address: _35.227.99.222_
 
