@@ -5,13 +5,13 @@ Get hired any day, any time.
 # [Link to iOS Git Repo]()
 
 # Screenshots of Runner
-
+<p align="center">
 ![Opening Frame][opening_frame] ![Profile][profile] <!-- ![Sign Up][sign_up] -->
 ![Job Posting][job_posting] ![Create Job][create_job] <!-- ![Job Confirmation][job_confirmation] -->
 <!-- ![Delete Job][delete_job] -->
 ![Home Screen with Job][home_screen] ![Job Poster][job_poster] <!-- [Report][report] -->
 ![Job Details][job_details] ![You're Hired!][youre_hired] <!-- ![Your Runner][your_runner] -->
-
+<p>
 [opening_frame]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/opening_frame.png "Opening Frame"
 [profile]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/2_profile.png "Profile"
 [sign_up]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/sign_up.png "Sign Up"
