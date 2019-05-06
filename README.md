@@ -38,9 +38,9 @@ Get hired any day, any time.
 
 ### API Design:
 ---
-```html
-<p style="font-family: courier, monospace;">GET /api/jobs/ - Get all jobs</p>
-```
+
+<d1 style="font-family: courier, monospace;">GET /api/jobs/ - Get all jobs</d1>
+
 > This gets all the jobs that is currently available for anyone to grab.
 
 **_POST /api/job/{user_id}/_** - Create a job for a specific user
