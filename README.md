@@ -6,7 +6,7 @@ Get hired any day, any time.
 
 # Screenshots of Runner
 
-![alt text]()
+![Opening Frame](https://github.com/adihshah/HackChallengeBackend/blob/master/images/profile.png "Opening Frame")
 
 # Description of Runner
 
