@@ -1,11 +1,11 @@
 # Runner
----
+
 Get hired any day, any time.
 
 # [Link to iOS Git Repo]()
----
+
 # Screenshots of Runner
----
+
 ![Opening Frame][opening_frame] ![Profile][profile] ![Sign Up][sign_up]
 ![Job Posting][job_posting] ![Create Job][create_job] ![Job Confirmation][job_confirmation] 
 ![Delete Job][delete_job]
@@ -37,9 +37,11 @@ Get hired any day, any time.
 # Backend Requirements
 
 ### API Design:
+---
 
 
 ### Deployment to Google Cloud:
+---
 Deployed on ip address: _35.227.99.222_
 
 # Additional Comments
