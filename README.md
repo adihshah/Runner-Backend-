@@ -36,11 +36,11 @@ Get hired any day, any time.
 
 # Backend Requirements
 
-##### API Design
+### API Design
 
 
-##### Deployment to Google Cloud
-Deployed on ip address: 35.227.99.222
+### Deployment to Google Cloud
+Deployed on ip address: _35.227.99.222_
 
 # Any Additional Comments
 
