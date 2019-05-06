@@ -2,7 +2,7 @@
 
 Get hired any day, any time.
 
-# [Link to iOS Git Repo]()
+# [Link to iOS Git Repo](https://github.com/Kompella/Runner)
 
 # Screenshots of Runner
 
@@ -37,7 +37,7 @@ Get hired any day, any time.
 # Backend Requirements
 
 ### API Design:
-
+---
 **_GET /api/jobs/_** - Get all jobs
 
 > This gets all the jobs that is currently available for anyone to grab.
@@ -52,23 +52,37 @@ Get hired any day, any time.
 
 **_DELETE /api/job/delete/{job_id}/_** - Delete a job BEFORE it’s completed
 
-> Remove a job from the listing. This can be useful if a job is no longer needed or 
+> Remove a job from the listing. This can be useful if a job is no longer needed or a job was created by accident.
 
 **_DELETE /api/job/finished/{job_id}/_** - Complete a job
 
+> When a job is completed, the job is moved to the poster's job history of past job creations and each user's infomation is changed accordingly. 
+
 **_POST /api/user/{user_id}/_** - Update a user’s information
+
+> If someone wants to change their profile information, this is the endpoint to do so. If no information is provided, nothing is changed. 
 
 **_POST /api/job/{job_id}/edit/_** - Update Job Information
 
-**_POST /api/user/{user_id}/job/{job_id}/_** - Assign a worker a job
+> If someone posted a job, but information needs to be changed, this is the endpoint to do so. If no information is provided, nothing is changed. 
+
+**_POST /api/user/{user_id}/job/{job_id}/_** - Assign a runner to a job
+
+> When a runner wants to accept a job, this is where you send the information of which user to which job. 
 
 **_POST /api/signup/_** - Create a user (signing up)
 
+> Sign a user up if the user doesn't already exist. Password is encrypted.
+
 **_POST /api/login/_** - Logging in for a user
+
+> Log a user into the app. 
 
 **_POST /api/update/session_** - Update session of a user
 
+> Update the session of a user currently on the app. 
 
+---
 ### Deployment to Google Cloud:
 
 Deployed on ip address: _35.227.99.222_
