@@ -6,11 +6,11 @@ Get hired any day, any time.
 
 # Screenshots of Runner
 
-![Opening Frame][opening_frame] ![Profile][profile] <!-- ![Sign Up][sign_up] -->
-![Job Posting][job_posting] ![Create Job][create_job] <!-- ![Job Confirmation][job_confirmation] -->
-<!-- ![Delete Job][delete_job] -->
-![Home Screen with Job][home_screen] ![Job Poster][job_poster] <!-- [Report][report] -->
-![Job Details][job_details] ![You're Hired!][youre_hired] <!-- ![Your Runner][your_runner] -->
+![Opening Frame][opening_frame] ![Profile][profile] ![Sign Up][sign_up]
+![Job Posting][job_posting] ![Create Job][create_job] ![Job Confirmation][job_confirmation]
+![Delete Job][delete_job] 
+![Home Screen with Job][home_screen] ![Job Poster][job_poster] ![Report][report]
+![Job Details][job_details] ![You're Hired!][youre_hired] ![Your Runner][your_runner]
 
 [opening_frame]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/opening_frame.png "Opening Frame"
 [profile]: https://github.com/adihshah/HackChallengeBackend/blob/master/images/2_profile.png "Profile"
@@ -95,4 +95,4 @@ Deployed on ip address: _35.227.99.222_
 
 # Additional Comments
 
-
+The iOS github repo had an issue, so it is uploaded in the form of a zip file. As for the next steps of this project, we'd like to have an in-app messaging system that'll allow users to interact with each other without calling on another external app, via phone call which is currently the only option. Also, we would like multiple sign ups such as google sign up and facebook sign up. We'd like to implement actual paypal or venmo payment system, since it's a large part of this app. Upholding the integrity of each user is one of the hardships, but privacy is an important role to this app. These are only a few of the possible further steps to this app. 
