@@ -2,19 +2,17 @@
 
 Get hired any day, any time.
 
-# Link to iOS Git Repo
-
-
+# [Link to iOS Git Repo]()
 
 # Screenshots of Runner
 
-
+![alt text]()
 
 # Description of Runner
 
 
 
-# [iOS Requirements](https://www.google.com)
+# iOS Requirements
 
 
 
