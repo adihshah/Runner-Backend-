@@ -2,13 +2,9 @@ import json
 from db import db, Jobs_in_Progress, Job_History, User
 from flask import Flask, request
 import users_dao
-# from google.oauth2 import id_token
-# from google.auth.transport import requests
 
 app = Flask(__name__)
 db_filename = 'todo.db'
-# request = requests.Request()
-# CLIENT_ID = "ABCDE12345"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' % db_filename
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -18,29 +14,6 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-
-'''
-Jason
-/api/jobs/ GET
-/api/job/<int:id>/ GET
-/api/job/ POST
-/api/job/<int:id>/ DELETE
-/api/user/ POST
-/api/user/<int:user_id>/ GET
-/api/user/<int:user_id>/job/<int:job_id>/ POST (assign user u to job j)
-'''
-# Aditya
-# DELETE /
-# UPDATE ^
-# CREATE NEW USER /api/users POST
-# GET USER /api/user/i GET
-
-
-# OAuth (Google)
-
-# Later
-# Connect to frontend
-# Deployment
 
 ############################ Helper Functions ##################################
 
@@ -300,71 +273,6 @@ def update_session():
         'update_token': user.update_token
     })
 
-
-@app.route('/api/rate/<int:user_id>/', methods=['POST'])
-def rate_user():
-    user = get_query_by_id(User, user_id)
-
-    if user is not None:
-        body = json.loads(request.data)
-        rating = body.get('rating')
-        typ = body.get('typ')
-        if typ == 'worker':
-            n = user.number_of_work_rating
-            user.work_rating = (user.work_rating*n + rating)/(rating+1)
-            user.number_of_work_rating += 1
-            db.session.commit()
-            return json.dumps({'success': True, 'data': user.serialize()}), 200
-        elif typ == 'boss':
-            n = user.number_of_boss_rating
-            user.boss_rating = (user.boss_rating*n + rating)/(rating+1)
-            user.number_of_work_rating += 1
-            db.session.commit()
-            return json.dumps({'success': True, 'data': user.serialize()}), 200
-    return json.dumps({'success': False, 'error': 'Post not found'}), 404
-
-# @app.route('/secret/', methods=['GET'])
-# def secret_message():
-#     success, session_token = extract_token(request)
-
-#     if not success:
-#         return session_token
-
-#     user = users_dao.get_user_by_session_token(session_token)
-#     if not user or not user.verify_session_token(session_token):
-#         return json.dumps({'error': 'Invalid session token'})
-
-#     return json.dumps({'message': 'Logged in as ' + user.email})
-
-
-# @app.route('/api/user/signin/<token>', methods=['POST'])
-# def verify_login(token):
-#     try:
-#         body = json.loads(request.data)
-#     except KeyError:
-#         return json.dumps({'success': False, 'error': 'No json Provided!'}), 400
-
-#     try:
-#         # Specify the CLIENT_ID of the app that accesses the backend:
-#         idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-
-#         # Or, if multiple clients access the backend server:
-#         # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-#         # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-#         #     raise ValueError('Could not verify audience.')
-
-#         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-#             raise ValueError('Wrong issuer.')
-
-#         # If auth request is from a G Suite domain:
-#         # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-#         #     raise ValueError('Wrong hosted domain.')
-
-#         # ID token is valid. Get the user's Google Account ID from the decoded token.
-#         userid = idinfo['sub']
-#     except ValueError:
-#         # Invalid token
-#         return json.dumps({'success': False, 'error': 'Invalid Token!'}), 404
 
 
 if __name__ == '__main__':
