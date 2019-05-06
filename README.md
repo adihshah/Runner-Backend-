@@ -39,7 +39,7 @@ Get hired any day, any time.
 ### API Design:
 ---
 
-<d1 style="font-family: courier, monospace;">GET /api/jobs/ - Get all jobs</d1>
+<dl style="font-family: courier, monospace;">GET /api/jobs/ - Get all jobs</dl>
 
 > This gets all the jobs that is currently available for anyone to grab.
 
