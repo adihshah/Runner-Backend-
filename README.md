@@ -38,27 +38,28 @@ Get hired any day, any time.
 
 ### API Design:
 
-_GET /api/jobs/_** - Get all jobs
+**_GET /api/jobs/_** - Get all jobs
+> This gets all the jobs that is currently available for anyone to grab.
+**_POST /api/job/{user_id}/_** - Create a job for a specific user
+> Creates a job for runners to see/accept.
+**_GET /api/user/{user_id}/_** - Get a specific user
+> Get a user's profile information
+**_DELETE /api/job/delete/{job_id}/_** - Delete a job BEFORE it’s completed
+> Remove a job from the listing. This can be useful if a job is no longer needed or 
+**_DELETE /api/job/finished/{job_id}/_** - Complete a job
 
-_POST /api/job/{user_id}/_ - Create a job for a specific user
+**_POST /api/user/{user_id}/_** - Update a user’s information
 
-_GET /api/user/{user_id}/_ - Get a specific user
+**_POST /api/job/{job_id}/edit/_** - Update Job Information
 
-_DELETE /api/job/delete/{job_id}/_ - Delete a job BEFORE it’s completed
+**_POST /api/user/{user_id}/job/{job_id}/_** - Assign a worker a job
 
-_DELETE /api/job/finished/{job_id}/_ - Complete a job
+**_POST /api/signup/_** - Create a user (signing up)
 
-_POST /api/user/{user_id}/_ - Update a user’s information
+**_POST /api/login/_** - Logging in for a user
 
-_POST /api/job/{job_id}/edit/_ - Update Job Information
+**_POST /api/update/session_** - Update session of a user
 
-_POST /api/user/{user_id}/job/{job_id}/_ - Assign a worker a job
-
-_POST /api/signup/_ - Create a user (signing up)
-
-_POST /api/login/_ - Logging in for a user
-
-_POST /api/update/session_ - Update session of a user
 
 ### Deployment to Google Cloud:
 
